@@ -1,0 +1,12 @@
+## Interface: 90200
+## Title: oUF_Hank_Banaak
+## Author: Banaak
+## Version: 9.2.0.43114
+## Dependencies: oUF
+## OptionalDeps: oUF_SpellRange
+
+
+config.lua
+tags.lua
+custom_modifications.lua
+hank.lua
