@@ -6,8 +6,6 @@ local pairs = pairs
 local ipairs = ipairs
 local select = select
 local tinsert = table.insert
-local ceil = math.ceil
-local floor = math.floor
 local upper = string.upper
 local strlen = string.len
 local strsub = string.sub
@@ -64,11 +62,10 @@ oUF_Hank_Banaak.classResources = {
         max = 6,
     },
     ['DRUID'] = {
-        inactive = { 'Interface\\AddOns\\oUF_Hank_Banaak\\textures\\shard_bg.blp' },
-        active = { 'Interface\\AddOns\\oUF_Hank_Banaak\\textures\\shard.blp' },
-        size = { 16, 16 },
-        spacing = 5,
-        max = 6,
+        inactive = { 'Interface\\PlayerFrame\\MonkNoPower' },
+        active = { 'Interface\\PlayerFrame\\MonkLightPower' },
+        size = { 20, 20 },
+        max = 5,
     }
 }
 
@@ -362,9 +359,9 @@ oUF_Hank_Banaak.customFilter = function(icons, unit, icon, name, rank, texture, 
         -- Sticky aura: curableDebuffs
         return true
         -- Usage of UnitIsUnit: Call from within focus frame will return "target" as caster if focus is targeted (player > target > focus)
-    elseif icons.filter == "HELPFUL" and UnitCanAttack("player", unit) and UnitIsUnit(unit, caster or "") and cfg["Auras" .. upper(unit)].StickyAuras.enemySelfBuffs then
+        --elseif icons.filter == "HELPFUL" and UnitCanAttack("player", unit) and UnitIsUnit(unit, caster or "") and cfg["Auras" .. upper(unit)].StickyAuras.enemySelfBuffs then
         -- Sticky aura: enemySelfBuffs
-        return true
+        --return true
     else
         -- Aura is not sticky, filter is set to blacklist
         if cfg["Auras" .. upper(unit)].FilterMethod[icons.filter == "HELPFUL" and "Buffs" or "Debuffs"] == "BLACKLIST" then
@@ -836,29 +833,6 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
         end)
     end
 
-    -- -- Combo points
-    -- if unit == "player" and (playerClass == "ROGUE" or playerClass == "DRUID") then
-    --     local bg = {}
-    --     local fill = {}
-    --     self.CPoints = {}
-    --     for i = 1, MAX_COMBO_POINTS do
-    --         self.CPoints[i] = CreateFrame("Frame", nil, self)
-    --         self.CPoints[i]:SetSize(16, 16)
-    --         if i > 1 then self.CPoints[i]:SetPoint("LEFT", self.CPoints[i - 1], "RIGHT") end
-    --         bg[i] = self.CPoints[i]:CreateTexture(nil, "ARTWORK")
-    --         bg[i]:SetTexture("Interface\\AddOns\\oUF_Hank_Banaak\\textures\\combo.blp")
-    --         bg[i]:SetTexCoord(0, 16 / 64, 0, 1)
-    --         bg[i]:SetAllPoints(self.CPoints[i])
-    --         fill[i] = self.CPoints[i]:CreateTexture(nil, "OVERLAY")
-    --         fill[i]:SetTexture("Interface\\AddOns\\oUF_Hank_Banaak\\textures\\combo.blp")
-    --         fill[i]:SetTexCoord(0.5, 0.75, 0, 1)
-    --         fill[i]:SetVertexColor(unpack(cfg.colors.power.ENERGY))
-    --         fill[i]:SetAllPoints(self.CPoints[i])
-    --     end
-    --     self.CPoints[1]:SetPoint("TOP", self, "BOTTOM")
-    --     self.CPoints.unit = "player"
-    -- end
-
     -- Runes
     if unit == "player" and playerClass == "DEATHKNIGHT" then
         self.Runes = CreateFrame("Frame", nil, self)
@@ -1262,27 +1236,10 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
     end
 
     -- Auras
-    if unit == "target" or unit == "focus" or (cfg.PlayerBuffs and unit == "player") then
-        local offset = 0
-        local relative
+    if unit == "target" or unit == "focus" then
         -- Buffs
         self.Buffs = CreateFrame("Frame", unit .. "_Buffs", self) -- ButtonFace needs a name
-        if unit == "player" then
-            if self.CPoints then
-                relative = self.CPoints[1]
-            elseif self.Runes then
-                relative = self.Runes
-            elseif self.ClassPower then
-                relative = self.ClassPower[1]
-            else
-                relative = self
-                offset = 40
-            end
-            self.Buffs:SetPoint("TOPLEFT", relative, "BOTTOMLEFT", offset, -5)
-        else
-            relative = self
-            self.Buffs:SetPoint("TOPLEFT", self, "BOTTOMLEFT", offset, -5)
-        end
+        self.Buffs:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, -5)
         self.Buffs:SetHeight(cfg.BuffSize)
         self.Buffs:SetWidth(225)
         self.Buffs.size = cfg.BuffSize
@@ -1294,8 +1251,8 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
 
         -- Debuffs
         self.Debuffs = CreateFrame("Frame", unit .. "_Debuffs", self)
-        self.Debuffs:SetPoint("LEFT", relative, "LEFT", offset, 0)
-        self.Debuffs:SetPoint("TOP", relative, "TOP", offset, 0) -- We will reanchor this in PreAuraSetPosition
+        self.Debuffs:SetPoint("LEFT", self, "LEFT", 0, 0)
+        self.Debuffs:SetPoint("TOP", self, "TOP", 0, 0) -- We will reanchor this in PreAuraSetPosition
         self.Debuffs:SetHeight(cfg.DebuffSize)
         self.Debuffs:SetWidth(225)
         self.Debuffs.size = cfg.DebuffSize
@@ -1498,39 +1455,6 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
         self:SetSize(250, 50)
     end
 
-end
-
--- custom modifications hooks --------------------------
-
-local modList
-
-for modName, modHooks in pairs(oUF_Hank_Banaak_hooks) do
-
-    local modErr = false
-    local numHooks = 0
-
-    for k, v in pairs(modHooks) do
-        numHooks = numHooks + 1
-        local success, ret = pcall(hooksecurefunc, oUF_Hank_Banaak, k, v)
-        if not success then
-            modErr = true
-            DEFAULT_CHAT_FRAME:AddMessage("oUF_Hank_Banaak: Couldn't create hook for function " .. k .. "() in |cFFFF5033" .. modName .. "|r: \"" .. ret .. "\"", cfg.colors.text[1], cfg.colors.text[2], cfg.colors.text[3])
-        end
-    end
-
-    if numHooks > 0 then
-        if not modErr then
-            modList = (modList or "") .. "|cFFFFFFFF" .. modName .. "|r, "
-        else
-            modList = (modList or "") .. "|cFFFF5033" .. modName .. " (see errors)|r, "
-        end
-    end
-
-end
-
-if modList then
-    DEFAULT_CHAT_FRAME:AddMessage("oUF_Hank_Banaak: Applied custom modifications: " .. strsub(modList, 1, -3), cfg.colors.text[1], cfg.colors.text[2], cfg.colors.text[3])
-    modList = nil
 end
 
 -- Frame creation --------------------------------

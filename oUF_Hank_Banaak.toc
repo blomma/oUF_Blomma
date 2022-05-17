@@ -5,8 +5,6 @@
 ## Dependencies: oUF
 ## OptionalDeps: oUF_SpellRange
 
-
 config.lua
 tags.lua
-custom_modifications.lua
 hank.lua
