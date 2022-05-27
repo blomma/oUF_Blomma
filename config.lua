@@ -252,17 +252,6 @@ oUF_Hank_Banaak_config = {
     -- Delay before experience information appears (in seconds)
     DelayXP = 1.5,
 
-    ----------------------- Range fading ------------------------
-    -------------------------------------------------------------
-
-    -- Requires oUF_SpellRange plugin!
-    -- http://www.wowinterface.com/downloads/info12839-oUFSpellRange.html
-
-    -- Range fading (true/false)
-    RangeFade = false,
-    -- Out of range opacity (0.0 - 1.0)
-    RangeFadeOpacity = 0.6,
-
     ------------------------ Totem bar --------------------------
     -------------------------------------------------------------
 

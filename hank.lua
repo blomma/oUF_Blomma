@@ -1254,14 +1254,6 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
         self.Debuffs.CustomFilter = oUF_Hank_Banaak.customFilter
     end
 
-    -- Support for oUF_SpellRange. The built-in oUF range check sucks :/
-    if (unit == "target" or unit == "focus") and cfg.RangeFade and IsAddOnLoaded("oUF_SpellRange") then
-        self.SpellRange = {
-            insideAlpha = 1,
-            outsideAlpha = cfg.RangeFadeOpacity
-        }
-    end
-
     -- Castbar
     if cfg.Castbar and (unit == "player" or unit == "target" or unit == "focus") then
         -- StatusBar
@@ -1441,9 +1433,7 @@ end
 if cfg.HideParty then oUF_Hank_Banaak.HideParty() end
 if cfg.Castbar then oUF_Hank_Banaak.AdjustMirrorBars() end
 
-if cfg.RangeFade and not IsAddOnLoaded("oUF_SpellRange") then
-    DEFAULT_CHAT_FRAME:AddMessage("oUF_Hank_Banaak: Please download and install oUF_SpellRange before enabling range checks!", cfg.colors.text[1], cfg.colors.text[2], cfg.colors.text[3])
-elseif cfg.TotemBar and not IsAddOnLoaded("oUF_TotemBar") then
+if cfg.TotemBar and not IsAddOnLoaded("oUF_TotemBar") then
     DEFAULT_CHAT_FRAME:AddMessage("oUF_Hank_Banaak: Please download and install oUF_TotemBar before enabling the totem bar!", cfg.colors.text[1], cfg.colors.text[2], cfg.colors.text[3])
 end
 
