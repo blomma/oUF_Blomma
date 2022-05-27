@@ -251,16 +251,4 @@ oUF_Hank_Banaak_config = {
     ShowXP = true,
     -- Delay before experience information appears (in seconds)
     DelayXP = 1.5,
-
-    ------------------------ Totem bar --------------------------
-    -------------------------------------------------------------
-
-    -- Requires oUF TotemBar plugin!
-    -- http://www.wowinterface.com/downloads/info13714-oUF_TotemBar.html
-
-    -- Display totem bar (true/false)
-    TotemBar = false,
-    -- Destroy totems on click at totem bar, destroy all totem via shift-click (true/false)
-    ClickToDestroy = true,
-
 }

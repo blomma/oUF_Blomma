@@ -957,99 +957,6 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
         end
     end
 
-    -- Totems (requires oUF_TotemBar)
-    local showTotemBar = playerClass == "SHAMAN" and IsAddOnLoaded("oUF_TotemBar") and cfg.TotemBar
-    if unit == "player" and showTotemBar then
-        initClassPower = function(unitFrame)
-            unitFrame.TotemBar = CreateFrame("Frame", "oUFHank_TotemBar", unitFrame)
-            unitFrame.TotemBar.Destroy = cfg.ClickToDestroy
-            unitFrame.TotemBar.delay = 0.3
-            unitFrame.TotemBar.colors = cfg.colors.totems
-        end
-        updateClassIconAnimation = function(self, val, ...)
-            if val == 0 then
-                -- Totem expired
-                self.glow:SetVertexColor(self:GetStatusBarColor())
-                self.glowend:SetVertexColor(self:GetStatusBarColor())
-                self.fill:Hide()
-                self.glowywheee:Show()
-            else
-                self.fill:SetSize(23, 4 + 12 * val / 1)
-                self.fill:SetTexCoord((1 + 23) / 128, ((23 * 2) + 1) / 128, 16 / 32 - 12 * val / 32, 20 / 32)
-                -- 2DO: This eats performance!!
-                self.fill:SetVertexColor(self:GetStatusBarColor())
-                if self.glowywheee:IsVisible() then
-                    self.glowywheee:Hide()
-                    self.glowend:Hide()
-                end
-                if not self.fill:IsVisible() then self.fill:Show() end
-            end
-        end
-        initClassSingleIcon = function(unitFrame, i, icon)
-            local data = oUF_Hank_Banaak.classResources[playerClass]
-
-            -- DO NOT WANT! ;p
-            icon:SetStatusBarTexture(data['inactive'][1])
-            icon.backdrop:SetTexture(data['active'][1])
-            icon.bg = icon:CreateTexture(nil)
-
-            local fill = icon:CreateTexture(nil, "OVERLAY")
-            fill:SetSize(data.size[1], data.size[2])
-            fill:SetPoint("BOTTOM")
-            fill:SetTexture(data['active'][1])
-            if data['active'][2] then
-                fill:SetTexCoord(unpack(data['active'][2]))
-            else
-                fill:SetTexCoord(0, 1, 0, 1)
-            end
-            icon.fill = fill
-
-            -- Fill the totems
-            unitFrame.TotemBar[i]:SetScript("OnValueChanged", updateClassIconAnimation)
-        end
-        initClassIconAnimation = function(unitFrame, i, icon)
-            local data = oUF_Hank_Banaak.classResources[playerClass]
-
-            local glowywheee = CreateFrame("Frame", nil, icon)
-            glowywheee:SetAllPoints()
-            glowywheee:SetAlpha(0)
-            glowywheee:Hide()
-            icon.glowywheee = glowywheee
-
-            local glow = glowywheee:CreateTexture(nil, "OVERLAY")
-            glow:SetAllPoints()
-            glow:SetPoint("CENTER")
-            glow:SetTexture(data['active'][1])
-            glow:SetTexCoord((2 + 2 * 23) / 128, ((23 * 3) + 2) / 128, 0, 20 / 32)
-            icon.glow = glow
-
-            local glowend = icon:CreateTexture(nil, "OVERLAY")
-            glowend:SetAllPoints()
-            glowend:SetTexture(data['active'][1])
-            glowend:SetTexCoord((2 + 2 * 23) / 128, ((23 * 3) + 2) / 128, 0, 20 / 32)
-            glowend:SetAlpha(0.5)
-            glowend:Hide()
-            icon.glowend = glowend
-
-            local anim = glowywheee:CreateAnimationGroup()
-            local alphaIn = anim:CreateAnimation("Alpha")
-            -- alphaIn:SetChange(0.5)
-            alphaIn:SetSmoothing("OUT")
-            alphaIn:SetDuration(1.5)
-            alphaIn:SetOrder(1)
-
-            glowywheee:SetScript("OnShow", function()
-                glowend:Hide()
-                anim:Play()
-            end)
-
-            anim:SetScript("OnFinished", function()
-                glowend:Show()
-                glowend:SetAlpha(0.5)
-            end)
-        end
-    end
-
     -- Holy power
     if unit == "player" and playerClass == "PALADIN" then
         initClassPower = function(unitFrame)
@@ -1432,10 +1339,6 @@ end
 
 if cfg.HideParty then oUF_Hank_Banaak.HideParty() end
 if cfg.Castbar then oUF_Hank_Banaak.AdjustMirrorBars() end
-
-if cfg.TotemBar and not IsAddOnLoaded("oUF_TotemBar") then
-    DEFAULT_CHAT_FRAME:AddMessage("oUF_Hank_Banaak: Please download and install oUF_TotemBar before enabling the totem bar!", cfg.colors.text[1], cfg.colors.text[2], cfg.colors.text[3])
-end
 
 -- Call for custom_modifications
 oUF_Hank_Banaak.PostSpawnFrames(oUF_Hank_Banaak)
