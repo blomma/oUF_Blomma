@@ -356,12 +356,8 @@ oUF_Hank_Banaak.customFilter = function(icons, unit, icon, name, rank, texture, 
         -- Sticky aura: petDebuffs
         return true
     elseif icons.filter == "HARMFUL" and not UnitCanAttack("player", unit) and canDispel[({ UnitClass("player") })[2]][dtype] and cfg["Auras" .. upper(unit)].StickyAuras.curableDebuffs then
-        -- Sticky aura: curableDebuffs
+        -- Sticky aura: curableDebuffs, enemySelfBuffs
         return true
-        -- Usage of UnitIsUnit: Call from within focus frame will return "target" as caster if focus is targeted (player > target > focus)
-        --elseif icons.filter == "HELPFUL" and UnitCanAttack("player", unit) and UnitIsUnit(unit, caster or "") and cfg["Auras" .. upper(unit)].StickyAuras.enemySelfBuffs then
-        -- Sticky aura: enemySelfBuffs
-        --return true
     else
         -- Aura is not sticky, filter is set to blacklist
         if cfg["Auras" .. upper(unit)].FilterMethod[icons.filter == "HELPFUL" and "Buffs" or "Debuffs"] == "BLACKLIST" then
