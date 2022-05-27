@@ -453,19 +453,6 @@ oUF_Hank_Banaak.PostCastStart = function(castbar, unit, name, rank, castid)
     castbar.castIsChanneled = false
     if unit == "vehicle" then unit = "player" end
 
-    -- Latency display
-    if unit == "player" then
-        -- Time between cast transmission and cast start event
-        local latency = GetTime() - (castbar.castSent or 0)
-        latency = latency > castbar.max and castbar.max or latency
-        castbar.Latency:SetText(("%dms"):format(latency * 1e3))
-        castbar.PreciseSafeZone:SetWidth(castbar:GetWidth() * latency / castbar.max)
-        castbar.PreciseSafeZone:ClearAllPoints()
-        castbar.PreciseSafeZone:SetPoint("TOPRIGHT")
-        castbar.PreciseSafeZone:SetPoint("BOTTOMRIGHT")
-        castbar.PreciseSafeZone:SetDrawLayer("BACKGROUND")
-    end
-
     if unit ~= "focus" then
         -- Cast layout
         castbar.Text:SetJustifyH("LEFT")
@@ -484,17 +471,6 @@ end
 oUF_Hank_Banaak.PostChannelStart = function(castbar, unit, name, rank)
     castbar.castIsChanneled = true
     if unit == "vehicle" then unit = "player" end
-
-    if unit == "player" then
-        local latency = GetTime() - (castbar.castSent or 0) -- Something happened with UNIT_SPELLCAST_SENT for vehicles
-        latency = latency > castbar.max and castbar.max or latency
-        castbar.Latency:SetText(("%dms"):format(latency * 1e3))
-        castbar.PreciseSafeZone:SetWidth(castbar:GetWidth() * latency / castbar.max)
-        castbar.PreciseSafeZone:ClearAllPoints()
-        castbar.PreciseSafeZone:SetPoint("TOPLEFT")
-        castbar.PreciseSafeZone:SetPoint("BOTTOMLEFT")
-        castbar.PreciseSafeZone:SetDrawLayer("OVERLAY")
-    end
 
     if unit ~= "focus" then
         -- Channel layout
@@ -1371,26 +1347,6 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
             cb.CustomDelayText = function(_, t)
                 cb.Time:SetText(("%.2f |cFFFF5033%s%.2f|r"):format(cb.castIsChanneled and t or cb.max - t, cb.castIsChanneled and "-" or "+", cb.delay))
             end
-        end
-
-        -- Latency
-        if unit == "player" then
-            cb.PreciseSafeZone = cb:CreateTexture(nil, "BACKGROUND")
-            cb.PreciseSafeZone:SetTexture(cfg.CastbarBackdropTexture)
-            cb.PreciseSafeZone:SetVertexColor(unpack(cfg.colors.castbar.latency))
-
-            cb.Latency = cb:CreateFontString(nil, "OVERLAY")
-            cb.Latency:SetFont(unpack(cfg.CastBarSmall))
-            cb.Latency:SetTextColor(unpack(cfg.colors.castbar.latencyText))
-            cb.Latency:SetShadowOffset(0.8, -0.8)
-            cb.Latency:SetPoint("CENTER", cb.PreciseSafeZone)
-            cb.Latency:SetPoint("BOTTOM", cb.PreciseSafeZone)
-
-            self:RegisterEvent("UNIT_SPELLCAST_SENT", function(_, _, caster)
-                if caster == "player" or caster == "vehicle" then
-                    cb.castSent = GetTime()
-                end
-            end, true)
         end
 
         -- Animation dummy

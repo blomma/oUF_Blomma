@@ -83,10 +83,6 @@ oUF_Hank_Banaak_config = {
             castFail = { 1, 0.31, 0.2 },
             -- Successful cast
             castSuccess = { 0.85, 1.00, 0.20 },
-            -- Latency bar
-            latency = { 1, 0.31, 0.2 },
-            -- Latency bar text
-            latencyText = { 0.7, 0.7, 0.7, 0.8 },
             -- Uninterruptible enemy spell border
             noInterrupt = { 1, 0.31, 0.2 },
         }
@@ -110,8 +106,6 @@ oUF_Hank_Banaak_config = {
     CastBarBig = { "Interface\\AddOns\\oUF_Hank_Banaak\\fonts\\Roboto-Regular.ttf", 15 },
     -- Castbar: Spell name (player, target)
     CastBarMedium = { "Interface\\AddOns\\oUF_Hank_Banaak\\fonts\\Roboto-Regular.ttf", 9 },
-    -- Castbar: Latency
-    CastBarSmall = { "Interface\\AddOns\\oUF_Hank_Banaak\\fonts\\Roboto-Regular.ttf", 8 },
 
     ---------------------- Castbar ------------------------------
     -------------------------------------------------------------
