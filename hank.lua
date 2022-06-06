@@ -754,15 +754,12 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
 
         local animRaidIconFadeOut = raidIconDummy:CreateAnimationGroup()
         local delayIcon = animRaidIconFadeOut:CreateAnimation("Alpha")
-        -- TODO confirm this change in raid
-        -- delayIcon:SetChange(0)
         delayIcon:SetFromAlpha(1)
         delayIcon:SetToAlpha(1)
         delayIcon:SetDuration(cfg.DelayXP * .75)
         delayIcon:SetOrder(1)
+
         local alphaOutIcon = animRaidIconFadeOut:CreateAnimation("Alpha")
-        -- TODO confirm this change in raid
-        -- alphaOutIcon:SetChange(-1)
         alphaOutIcon:SetFromAlpha(1)
         alphaOutIcon:SetToAlpha(0)
         alphaOutIcon:SetSmoothing("OUT")
@@ -854,7 +851,6 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
 
             local anim = shinywheee:CreateAnimationGroup()
             local alphaIn = anim:CreateAnimation("Alpha")
-            -- alphaIn:SetChange(0.3)
             alphaIn:SetDuration(0.4)
             alphaIn:SetOrder(1)
             local rotateIn = anim:CreateAnimation("Rotation")
@@ -867,7 +863,6 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
             scaleIn:SetDuration(0.4)
             scaleIn:SetOrder(1)
             local alphaOut = anim:CreateAnimation("Alpha")
-            -- alphaOut:SetChange(-0.5)
             alphaOut:SetDuration(0.4)
             alphaOut:SetOrder(2)
             local rotateOut = anim:CreateAnimation("Rotation")
@@ -967,49 +962,8 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
         end
     end
 
-    -- StatusBarIcons: Totems / Soul Shards / Burning Embers / Demonic Fury
-    if unit == "player" and showTotemBar then
-        local data = oUF_Hank_Banaak.classResources[playerClass]
-        local displayType = "TotemBar"
-
-        if initClassPower then
-            initClassPower(self)
-        end
-
-        for i = 1, oUF_Hank_Banaak.classResources[playerClass].max do
-            local icon = CreateFrame("StatusBar", nil, self)
-            icon:SetSize(data.size[1], data.size[2])
-            icon:SetStatusBarTexture(data['active'][1])
-            icon:SetOrientation("VERTICAL")
-
-            local backdrop = icon:CreateTexture(nil, "BACKGROUND")
-            backdrop:SetAllPoints()
-            backdrop:SetTexture(data['inactive'][1])
-            if data['inactive'][2] then
-                backdrop:SetTexCoord(unpack(data['inactive'][2]))
-            else
-                backdrop:SetTexCoord(0, 1, 0, 1)
-            end
-            icon.backdrop = backdrop
-
-            if i == 1 then
-                icon:SetPoint(data.inverse and "TOPRIGHT" or "TOPLEFT", self, "BOTTOMRIGHT", data.offset or -90, 0)
-            else
-                icon:SetPoint(data.inverse and "RIGHT" or "LEFT", self[displayType][i - 1], data.inverse and "LEFT" or "RIGHT", data.spacing or 0,
-                    0)
-            end
-
-            self[displayType][i] = icon
-
-            if initClassSingleIcon then
-                initClassSingleIcon(self, i, icon)
-            end
-            if initClassIconAnimation then
-                initClassIconAnimation(self, i, icon)
-            end
-        end
-        -- ClassPower: Harmony Orbs / Holy Power / Warlock Shards
-    elseif unit == "player" and (playerClass == "MONK" or playerClass == "PALADIN" or playerClass == "WARLOCK" or playerClass == "DRUID") then
+    -- StatusBarIcons
+    if unit == "player" and (playerClass == "MONK" or playerClass == "PALADIN" or playerClass == "WARLOCK" or playerClass == "DRUID") then
         local data = oUF_Hank_Banaak.classResources[playerClass]
         local bg = {}
         self.ClassPower = {}
@@ -1076,10 +1030,6 @@ oUF_Hank_Banaak.sharedStyle = function(self, unit, isSingle)
 
         self.ClassPower.PostUpdate = function(_, current, max, changed, powerType)
             local hide = false
-            -- TODO(7.0): may not matter anymore
-            -- if event == 'ClassPowerDisable' then
-            -- 	hide = true
-            -- end
             for i = 1, oUF_Hank_Banaak.classResources[playerClass].max do
                 if hide or max == nil or i > max then
                     self.ClassPower[i]:Hide()
